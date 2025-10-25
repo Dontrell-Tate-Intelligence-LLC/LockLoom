@@ -1,0 +1,75 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>LockLoom — Device Owner Provisioning QR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; display:flex; min-height:100vh; }
+  .wrap { margin:auto; max-width: 1100px; padding: 24px; text-align:center; }
+  h1 { font-weight: 700; margin: 0 0 8px; }
+  .muted { opacity: .75; }
+  #qr { display:block; margin: 24px auto; max-width: min(90vmin, 900px); width: 100%; height: auto; }
+  .err { color: #c00; font-weight: 600; }
+  code, a { word-break: break-all; }
+</style>
+
+<div class="wrap">
+  <h1>LockLoom — Device Owner Provisioning QR</h1>
+  <div class="muted">Scannable on Android 9+ setup screen (tap “Welcome” 6–7×)</div>
+
+  <img id="qr" alt="Provisioning QR (latest release)" />
+
+  <div id="status" class="muted">Fetching latest release…</div>
+
+  <p>
+    <a id="pngLink" href="#" target="_blank" rel="noopener">Open PNG</a> ·
+    <a id="jsonLink" href="#" target="_blank" rel="noopener">Open JSON</a>
+  </p>
+
+  <hr/>
+  <p class="muted">
+    If the image doesn’t appear, ensure your repo’s latest release includes
+    <code>qr_provisioning.png</code> and the repo is public.
+  </p>
+</div>
+
+<script>
+(async () => {
+  const owner = "Dontrell-Tate-Intelligence-LLC";
+  const repo  = "LockLoom";
+  const status = document.getElementById("status");
+  const img    = document.getElementById("qr");
+  const pngL   = document.getElementById("pngLink");
+  const jsonL  = document.getElementById("jsonLink");
+
+  try {
+    const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
+      headers: { "Accept": "application/vnd.github+json" },
+      cache: "no-store"
+    });
+    if (!resp.ok) throw new Error(`GitHub API ${resp.status}`);
+    const data = await resp.json();
+
+    const png = data.assets.find(a => a.name === "qr_provisioning.png");
+    const json = data.assets.find(a => a.name === "qr_provisioning.json");
+
+    if (!png) throw new Error("qr_provisioning.png not found in latest release assets.");
+
+    // browser_download_url works fine as <img src> even though it sets Content-Disposition: attachment
+    img.src = png.browser_download_url;
+    pngL.href = png.browser_download_url;
+    pngL.textContent = "Open PNG";
+
+    if (json) {
+      jsonL.href = json.browser_download_url;
+      jsonL.textContent = "Open JSON";
+    } else {
+      jsonL.remove();
+    }
+
+    status.textContent = `Loaded from latest release: ${data.tag_name}`;
+  } catch (e) {
+    status.innerHTML = `<span class="err">Failed to load QR:</span> ${String(e)}`;
+  }
+})();
+</script>
