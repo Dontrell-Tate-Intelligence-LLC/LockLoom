@@ -1,0 +1,57 @@
+name: Build QR provisioning assets on release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build-qr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java for keytool
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Ensure qrcode dependency
+        run: python -m pip install --upgrade pip && python -m pip install qrcode[pil]
+
+      - name: Build QR JSON + PNG from latest
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+          SKIP_USER_SETUP: "false"   # change to "true" if you want to skip user setup
+          COMPONENT_NAME: "com.lockloom.dpc/.DeviceAdminReceiver"
+        run: |
+          chmod +x ./build_qr_latest.sh
+          ./build_qr_latest.sh
+        shell: bash
+
+      - name: Upload artifacts (for CI browsing)
+        uses: actions/upload-artifact@v4
+        with:
+          name: qr-provisioning-assets
+          path: |
+            dist/qr_provisioning.json
+            dist/qr_provisioning.png
+
+      - name: Attach assets to this Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/qr_provisioning.json
+            dist/qr_provisioning.png
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
