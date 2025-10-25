@@ -5,7 +5,7 @@ LockLoom supports silent SMS codewords—with three configurable phrases per act
 
 The consumer app ships with an in-app walkthrough that guides buyers through Android Device Owner or iOS MDM-lite/TestFlight enrollment, captures consent for degraded coverage when management rights are refused, provisions carrier/CPaaS relays for mirrored SMS distress triggers, and documents silent SOS automation (radios auto-toggle without indicators, with an optional NFC tag/Bluetooth fob hardware kill switch). Users can require the kill switch’s presence for normal operation and, when absent, LockLoom immediately locks the device until the switch returns. Telemetry retention is capped at 30 days, stored as salted SHA-512 hashes under consumer-owned keys, and onboarding recommends dedicated Proton Mail accounts for alerts and key escrow.
 
-LockLoom launches as a single consumer-tier SKU priced at a $1 lifetime purchase, with optional upgrades delivered via in-app unlocks while retaining enterprise manageability through configuration.
+LockLoom launches as a single consumer-tier SKU priced at a USD $4.99 lifetime purchase, with optional upgrades delivered via in-app unlocks while retaining enterprise manageability through configuration.
 
 See [`docs/architecture.md`](docs/architecture.md) for the complete architecture blueprint.
 
