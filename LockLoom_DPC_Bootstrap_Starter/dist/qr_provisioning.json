@@ -1,0 +1,6 @@
+{
+  "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME": "com.lockloom.dpc/.DeviceAdminReceiver",
+  "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION": "https://github.com/Dontrell-Tate-Intelligence-LLC/LockLoom/releases/latest/download/lockloom-dpc.apk",
+  "android.app.extra.PROVISIONING_DEVICE_ADMIN_SIGNATURE_CHECKSUM": "v21SEzkLSdzjpWuYrI5JER8XrM02vREDiaX_jQUR2uU",
+  "android.app.extra.PROVISIONING_SKIP_USER_SETUP": false
+}
