@@ -1,0 +1,82 @@
+Copyright (c) 2025 Dontrell Tate Intelligence, LLC
+
+LockLoom Proprietary License (LPL-1.0)
+
+Last updated: 2025-10-18
+
+1. Definitions
+
+Materials: All source code, object code, build artifacts, compiled outputs, models, datasets, documentation, specifications, and any updates, patches, or fixes provided by Licensor.
+
+Derivative Works: Any work based on or incorporating the Materials, including modifications, translations, ports, bindings, model fine-tunes, and compiled or transpiled outputs.
+
+Confidential Information: The Materials, Derivative Works, build configurations, keys, non-public APIs, and any non-public information disclosed by Licensor.
+
+PII-Treatment Covenant: The standard of care described in §6.2.
+
+2. License Grant
+
+Subject to this Agreement, Licensor grants Licensee a limited, non-exclusive, non-transferable, non-sublicensable license to internally install, execute, and use the Materials solely for Licensee’s internal business purposes. No rights are granted by implication.
+
+3. Restrictions
+
+Licensee shall not (and shall not permit others to):
+(a) distribute, publish, host, disclose, or make the Materials or Derivative Works available to third parties;
+(b) sublicense, sell, rent, lease, or lend the Materials;
+(c) reverse engineer, decompile, or disassemble except to the minimum extent a law expressly prohibits this restriction;
+(d) remove or alter notices;
+(e) use the Materials to create a competing product or to train models intended to replicate the Materials’ functionality;
+(f) use the Materials in violation of export, sanctions, or safety laws.
+
+4. Ownership; Assignment of Derivatives
+
+4.1 Ownership. Licensor retains all right, title, and interest in and to the Materials and all intellectual property therein.
+4.2 Derivatives. All Derivative Works are, upon creation, owned exclusively by Licensor. To the extent any Derivative Works do not automatically vest in Licensor, Licensee hereby irrevocably assigns to Licensor all right, title, and interest in such Derivative Works, including worldwide intellectual property rights, and waives (or, where not waivable, agrees not to assert) moral rights. Licensee shall execute further documents reasonably requested to perfect such rights.
+
+5. Feedback
+
+Any suggestions, improvements, or reports provided by Licensee are Feedback and may be used by Licensor without restriction; Feedback is not Confidential Information of Licensee.
+
+6. Confidentiality & Security
+
+6.1 Confidentiality. Licensee shall protect the Confidential Information using at least the same degree of care used to protect its own highly confidential information, and no less than a reasonable standard of care.
+6.2 PII-Treatment Covenant. Without characterizing the Materials as “personal data,” Licensee shall:
+(i) restrict access on a strict need-to-know basis;
+(ii) implement administrative, technical, and physical safeguards at least equivalent to those Licensee applies to regulated personal data (e.g., encryption at rest/in transit, access logging, key management, breach response);
+(iii) prohibit use in multi-tenant or public datasets; and
+(iv) notify Licensor without undue delay of any confirmed unauthorized access and cooperate on remediation.
+6.3 No Data Transfer Rights. This Agreement does not grant Licensee any right to disclose or transfer Confidential Information to third parties.
+
+7. Compliance & Audit
+
+Upon 10 days’ notice, Licensor may audit (remotely or on-site) Licensee’s compliance, not more than once per 12-month period, during business hours, under reasonable confidentiality.
+
+8. Term & Termination
+
+This Agreement begins on acceptance and continues until terminated. Licensor may terminate immediately for breach. Upon termination, all rights end and Licensee must cease use, delete and certify deletion of Materials and Confidential Information, and return or assign any Derivative Works not already assigned.
+
+9. Remedies
+
+Licensee acknowledges that breach causes irreparable harm for which monetary damages are inadequate; Licensor is entitled to injunctive relief in addition to other remedies.
+
+10. Warranty Disclaimer
+
+THE MATERIALS ARE PROVIDED “AS IS.” LICENSOR DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+11. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, LICENSOR IS NOT LIABLE FOR INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES; LICENSOR’S AGGREGATE LIABILITY SHALL NOT EXCEED FEES PAID (IF ANY) FOR THE 12 MONTHS PRECEDING THE CLAIM.
+
+12. Export & Sanctions
+
+Licensee shall comply with applicable export control and sanctions laws and shall not export, re-export, or provide the Materials to prohibited destinations or parties.
+
+13. Governing Law; Venue
+
+Choose one (fill in before use): [New York, USA law; courts in New York County] or [England & Wales; courts in London] or [your preferred jurisdiction]. The U.N. CISG does not apply.
+
+14. Entire Agreement; Order of Precedence
+
+This is the entire agreement regarding the Materials and supersedes all prior terms on the subject. Any conflicting purchase order terms are void.
+
+By installing or using the Materials, Licensee agrees to this TPL-1.0.
