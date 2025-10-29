@@ -50,10 +50,10 @@
     if (!resp.ok) throw new Error(`GitHub API ${resp.status}`);
     const data = await resp.json();
 
-    const png = data.assets.find(a => a.name === "qr_provisioning.png");
-    const json = data.assets.find(a => a.name === "qr_provisioning.json");
+    const png = data.assets.find(a => a.name === "lockloom-device-owner-qr.png");
+    const json = data.assets.find(a => a.name === "lockloom-device-owner-qr.json");
 
-    if (!png) throw new Error("qr_provisioning.png not found in latest release assets.");
+    if (!png) throw new Error("lockloom-device-owner-qr.png not found in latest release assets.");
 
     // browser_download_url works fine as <img src> even though it sets Content-Disposition: attachment
     img.src = png.browser_download_url;
