@@ -11,7 +11,31 @@
   #qr { display:block; margin: 24px auto; max-width: min(90vmin, 900px); width: 100%; height: auto; }
   .err { color: #c00; font-weight: 600; }
   code, a { word-break: break-all; }
+
+  /* New: policy link banner */
+  .policy-banner {
+    width: 100%;
+    box-sizing: border-box;
+    background: color-mix(in oklab, CanvasText 12%, Canvas);
+    border-bottom: 1px solid color-mix(in oklab, CanvasText 18%, Canvas);
+    padding: 10px 14px;
+    text-align: center;
+  }
+  .policy-banner a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .policy-banner a:hover { text-decoration: underline; }
 </style>
+
+<!-- New banner at the very top -->
+<div class="policy-banner">
+  Device Owner policies & runtime permission disclosure:
+  <a href="https://dontrell-tate-intelligence-llc.github.io/LockLoom/policies/lockloom-device-owner-policies.html"
+     rel="noopener" target="_blank">
+    https://dontrell-tate-intelligence-llc.github.io/LockLoom/policies/lockloom-device-owner-policies.html
+  </a>
+</div>
 
 <div class="wrap">
   <h1>LockLoom — Device Owner Provisioning QR</h1>
