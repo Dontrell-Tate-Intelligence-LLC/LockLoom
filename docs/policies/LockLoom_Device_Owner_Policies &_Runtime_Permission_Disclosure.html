@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LockLoom Device Owner Policies & Runtime Permission Disclosure</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --fg:#0b1b13; --muted:#41584b; --accent:#1b5e20;
+      --bg:#f7faf8; --panel:#ffffff; --warn:#7a1b1b;
+    }
+    body { margin:0; font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color:var(--fg); background:var(--bg); }
+    header { background:var(--panel); border-bottom:1px solid #e7eee9; padding:24px; }
+    h1 { margin:0 0 4px 0; font-size:22px; color:var(--accent); }
+    h2 { margin:28px 0 12px; font-size:18px; color:var(--accent); }
+    h3 { margin:22px 0 8px; font-size:16px; color:var(--muted); }
+    main { max-width:960px; margin:0 auto; padding:24px; }
+    .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:#e8f5e9; color:#0f4d19; font-weight:600; font-size:13px; }
+    .panel { background:var(--panel); border:1px solid #e7eee9; border-radius:10px; padding:16px; margin:16px 0; }
+    .grid { display:grid; grid-template-columns: 1fr; gap:12px; }
+    @media (min-width:800px){ .grid{ grid-template-columns: 1.2fr 2fr; } }
+    table { width:100%; border-collapse:collapse; background:var(--panel); }
+    th, td { text-align:left; padding:10px 12px; border-bottom:1px solid #eef3ef; vertical-align:top; }
+    th { background:#f5fbf7; font-weight:700; }
+    code { background:#f0f6f2; padding:2px 6px; border-radius:6px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 85%; }
+    .note { font-size:14px; color:var(--muted); }
+    .warn { color:var(--warn); font-weight:600; }
+    .list { margin:8px 0 0 18px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>LockLoom — Device Policy Disclosure</h1>
+    <div class="badge">Zero-Exfil Commitment</div>
+    <p class="note" style="margin-top:8px">
+      This device owner (DO) configuration is intentionally designed for <strong>zero data exfiltration</strong>.
+      The app does not transmit photos, audio, video, telemetry, or identifiers to any backend. All “network”
+      integrations in code are <em>no-op delegates</em>, and the control-plane base URL is disabled.
+    </p>
+  </header>
+
+  <main>
+    <!-- WHY THIS PAGE EXISTS -->
+    <section class="panel">
+      <h2>What this page covers</h2>
+      <p>
+        This disclosure enumerates every <strong>DevicePolicyManager</strong> capability the app uses as device owner,
+        and explains why each is required. It also includes an <strong>addendum</strong> listing the normal
+        <em>runtime permissions</em> the app may request at the OS level (those are not “device policies,” but auditors
+        often review them together).
+      </p>
+    </section>
+
+    <!-- DEVICE OWNER POLICIES -->
+    <section>
+      <h2>Device Owner (DO) Policies Used</h2>
+      <table aria-label="Device Owner Policies">
+        <thead>
+          <tr>
+            <th style="width:28%">Policy / API (scope)</th>
+            <th>Purpose & Behavior (why it’s needed)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>lockNow</code> via <em>DeviceLockController</em> (DO)</td>
+            <td>
+              Allows the app to <strong>immediately lock</strong> the device in response to policy violations
+              (e.g., integrity attestation failure, kill-switch absence, session watchdog timeout).
+              This is a <em>local</em> action; no data leaves the device.
+            </td>
+          </tr>
+          <tr>
+            <td><code>wipeDevice</code> via <em>ShutdownController</em> (DO)</td>
+            <td>
+              Enables <strong>factory reset</strong> escalation after repeated integrity failures or explicit policy triggers.
+              Used only under well-defined thresholds; again, this is a device-local action with zero network use.
+            </td>
+          </tr>
+          <tr>
+            <td><code>setApplicationHidden</code> (DO)</td>
+            <td>
+              Supports the “Hidden Workspace”: selected, already-protected apps can be <strong>hidden/unhidden</strong>
+              on the device. Hiding affects launcher visibility only; it does not uninstall or export data.
+            </td>
+          </tr>
+          <tr>
+            <td><span title="U+1F50C">USB guard</span>:
+              <code>setUsbDataSignalingEnabled</code> (Android 14/15+, DO) <br/>
+              or legacy <code>addUserRestriction(DISALLOW_USB_FILE_TRANSFER)</code> (Android 7+)</td>
+            <td>
+              When the paired “kill-switch” device (e.g., Bluetooth tag) is absent and policy requires presence,
+              the manager disables USB data signaling (or applies the legacy user restriction) to reduce
+              exfil/ingress risk through USB. Automatically <strong>cleared</strong> when the device reconnects or policy no longer requires it.
+            </td>
+          </tr>
+          <tr>
+            <td><code>forceStopPackage</code> (Android 7.0+, DO-only)</td>
+            <td>
+              As part of local “stream termination,” the DO can request specific protected apps to be <strong>force-stopped</strong>.
+              If unavailable on the platform or not permitted, the code falls back to killing background processes where possible.
+              This is entirely local and does not export data.
+            </td>
+          </tr>
+          <tr>
+            <td>DO-granted runtime permission state: <code>READ_PHONE_STATE</code></td>
+            <td>
+              During setup, the DO auto-grants <code>READ_PHONE_STATE</code> to enable <strong>SIM-swap detection</strong>.
+              The feature computes a local hash of SIM identifiers and compares it on-device; notifications are local only.
+            </td>
+          </tr>
+          <tr>
+            <td>Foreground service management (system-visible notification)</td>
+            <td>
+              The app runs a persistent <strong>foreground service</strong> (with a user-visible notification) to host local
+              monitors (integrity, kill-switch, SOS scheduler). Starting this service is guarded by
+              the user-level <code>POST_NOTIFICATIONS</code> permission on Android 13+; no data transmission occurs.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="panel note">
+        <strong>Implementation notes:</strong>
+        <ul class="list">
+          <li>Network loggers/dispatchers (media capture, shutdown, SOS, SIM-swap) are backed by <em>no-op</em> delegates.</li>
+          <li>All capture files (photo/audio/video) are stored in app cache, <strong>encrypted locally</strong> for processing,
+              then deleted. No upload endpoints are configured.</li>
+          <li>Control plane endpoints are initialized as <em>disabled</em>; telemetry queue is cleared on startup.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ACCESSIBILITY DISCLOSURE -->
+    <section>
+      <h2>Accessibility Service (user-consented, not a device policy)</h2>
+      <div class="panel">
+        <p>
+          The app offers an optional <strong>AccessibilityService</strong> to intercept launches of selected protected apps
+          and gate them behind authentication. Enabling it requires explicit user action in system settings
+          and an in-app consent record. The service observes <em>window state changes</em> only to identify the
+          foreground package; it does not transmit events off-device.
+        </p>
+      </div>
+    </section>
+
+    <!-- RUNTIME PERMISSIONS ADDENDUM -->
+    <section>
+      <h2>Runtime Permissions — Addendum (non-policy)</h2>
+      <p class="note">
+        The following are normal app runtime permissions that <em>may</em> be requested by the OS.
+        They are <strong>not</strong> DevicePolicyManager controls, but are listed here for audit completeness.
+        All uses below are <strong>local-only</strong> and consistent with the zero-exfil posture.
+      </p>
+      <table aria-label="Runtime Permissions">
+        <thead>
+          <tr>
+            <th style="width:28%">Permission</th>
+            <th>Purpose & Behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>android.permission.CAMERA</code></td>
+            <td>
+              Used for on-device photo/video capture triggered by local codeword actions or integrity workflows.
+              Media is encrypted locally and deleted after processing; there is no upload path.
+            </td>
+          </tr>
+          <tr>
+            <td><code>android.permission.RECORD_AUDIO</code></td>
+            <td>
+              Used for on-device audio capture via MediaRecorder. Files are handled as above (local encryption, ephemeral storage, no network).
+            </td>
+          </tr>
+          <tr>
+            <td><code>android.permission.READ_PHONE_STATE</code></td>
+            <td>
+              Required for SIM-swap detection (reading SIM/telephony state). The app stores only a <em>hash</em> of identifiers
+              inside app storage and performs comparisons locally. This permission is also DO-granted at setup to ensure continuity.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>android.permission.BLUETOOTH_CONNECT</code> (Android 12+) <br/>
+              <span class="note">or legacy <code>BLUETOOTH</code> / <code>BLUETOOTH_ADMIN</code> on older Android</span>
+            </td>
+            <td>
+              Allows reading connection state of the user-paired “kill-switch” Bluetooth device.
+              The app listens to connection broadcasts and queries connected profiles; no device data is uploaded.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>android.permission.ACCESS_FINE_LOCATION</code> / <code>ACCESS_COARSE_LOCATION</code> (if declared)
+            </td>
+            <td>
+              Used by the optional local SOS beacon to obtain a location fix. The SOS dispatcher in this build is a
+              <em>no-op</em> that does not transmit location off-device. Location usage can also be policy-gated or disabled.
+            </td>
+          </tr>
+          <tr>
+            <td><code>android.permission.POST_NOTIFICATIONS</code> (Android 13+)</td>
+            <td>
+              Required to present the persistent notification for the foreground service. If not granted, the service defers start until the user permits it.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="panel note">
+        <strong>Not networked by design:</strong>
+        <ul class="list">
+          <li>“Network*” classes (e.g., <em>NetworkSosAlertDispatcher</em>, <em>NetworkSimSwapNotifier</em>,
+              <em>NetworkFailureEvidenceDispatcher</em>, <em>NetworkRemoteMediaCaptureLogger</em>) are implemented as
+              no-ops or pass-through to local droppers, guaranteeing no transmission.</li>
+          <li>Media capture pipelines delete temporary files after use and never write to shared storage.</li>
+          <li>All logs use Logcat only and do <em>not</em> leave the device.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- DATA HANDLING -->
+    <section>
+      <h2>Data Handling & Retention</h2>
+      <div class="panel grid">
+        <div>
+          <h3>Local-only Processing</h3>
+          <ul class="list">
+            <li>Photos, audio, and video are captured to app cache, encrypted with a device-specific key, and then deleted.</li>
+            <li>SIM-swap uses a local hash of SIM info; the previous/current hash lives in app/private storage.</li>
+            <li>Accessibility events are observed transiently to gate app launches; they are not exported.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>No Control Plane</h3>
+          <ul class="list">
+            <li>ControlPlaneEndpoints are initialized in a disabled state.</li>
+            <li>On startup, the telemetry queue is cleared.</li>
+            <li>All “remote logger/dispatcher” interfaces resolve to no-op implementations.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLATFORM GUARDRAILS -->
+    <section>
+      <h2>Platform Guardrails & Version Notes</h2>
+      <div class="panel">
+        <ul class="list">
+          <li>USB guarding prefers <code>setUsbDataSignalingEnabled</code> on Android 14/15+ and falls back to
+              <code>DISALLOW_USB_FILE_TRANSFER</code> on Android 7+.</li>
+          <li><code>forceStopPackage</code> is invoked only on Android 7.0+ when available to a DO.</li>
+          <li>Bluetooth monitoring honors <code>BLUETOOTH_CONNECT</code> (12+) or legacy permissions; if missing, the
+              system defaults to “disconnected” without crashing.</li>
+          <li>Foreground service types are set appropriately across OS versions; the service will not start without user notification consent on 13+.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONCLUSION -->
+    <section class="panel">
+      <h2>Summary</h2>
+      <p>
+        The DO configuration above reflects exactly what the app enforces on-device and <strong>does not</strong>
+        add any networked behaviors. All sensitive operations (lock, wipe, hide apps, USB guard, force-stop)
+        are strictly local. The runtime permissions addendum is provided for audit completeness and remains
+        consistent with the <strong>zero-exfil</strong> design.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
