@@ -18,25 +18,40 @@
     box-sizing: border-box;
     background: color-mix(in oklab, CanvasText 12%, Canvas);
     border-bottom: 1px solid color-mix(in oklab, CanvasText 18%, Canvas);
-    padding: 10px 14px;
+    padding: 12px 14px;
     text-align: center;
+    font-size: 2em;            /* 2× font size only for this section */
+    line-height: 1.25;
   }
   .policy-banner a {
     font-weight: 600;
     text-decoration: none;
+    display: inline-block;     /* forces the URL onto its own line */
+    margin-top: 6px;
   }
   .policy-banner a:hover { text-decoration: underline; }
+  .policy-banner img {
+    display: block;
+    margin: 10px auto 0;
+    width: 128px;              /* adjust as desired */
+    height: auto;
+  }
 </style>
 
 <!-- New banner at the very top -->
 <div class="policy-banner">
-  <div>Device Owner policies & runtime permission disclosure:</div>
+  <div>Device Owner policies &amp; runtime permission disclosure:</div>
   <a href="https://dontrell-tate-intelligence-llc.github.io/LockLoom/policies/lockloom-device-owner-policies.html"
      rel="noopener" target="_blank">
     https://dontrell-tate-intelligence-llc.github.io/LockLoom/policies/lockloom-device-owner-policies.html
   </a>
+  <img
+    src="https://dontrell-tate-intelligence-llc.github.io/LockLoom/assets/lockloom-logo.png"
+    alt="LockLoom app icon"
+    loading="lazy"
+    decoding="async"
+  />
 </div>
-
 
 <div class="wrap">
   <h1>LockLoom — Device Owner Provisioning QR</h1>
@@ -53,8 +68,6 @@
 
   <hr/>
   <p class="muted">
-    If the image doesn’t appear, ensure your repo’s latest release includes
-    <code>lockloom-device-owner-qr.png</code> and the repo is public.
   </p>
 </div>
 
