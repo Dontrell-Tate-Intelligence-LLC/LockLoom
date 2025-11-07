@@ -4,13 +4,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root { color-scheme: light dark; }
-  body { margin:0; font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; display:flex; min-height:100vh; }
-  .wrap { margin:auto; max-width: 1100px; padding: 24px; text-align:center; }
+  body {
+    margin: 0;
+    font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    min-height: 100vh;          /* no flex here; let content stack */
+  }
+
+  .wrap { margin: auto; max-width: 1100px; padding: 24px; }
+
   h1 { font-weight: 700; margin: 0 0 8px; }
   .muted { opacity: .75; }
-  #qr { display:block; margin: 24px auto; max-width: min(90vmin, 900px); width: 100%; height: auto; }
   .err { color: #c00; font-weight: 600; }
   code, a { word-break: break-all; }
+
+  /* Two-column layout */
+  .main {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .left, .right {
+    flex: 1 1 0;   /* equal halves */
+    min-width: 0;  /* prevent overflow */
+  }
+
+  /* QR image sizing inside right column */
+  #qr { display:block; margin: 0 auto; max-width: 100%; height: auto; }
 
   /* New: policy link banner */
   .policy-banner {
@@ -36,16 +55,21 @@
     width: 128px;              /* adjust as desired */
     height: auto;
   }
+
+  /* Stack on small screens */
+  @media (max-width: 900px) {
+    .main { flex-direction: column; }
+  }
 </style>
 
-<!-- New banner at the very top -->
+<!-- Banner at the very top -->
 <div class="policy-banner">
   <div>Device Owner policies &amp; runtime permission disclosure:</div>
   <a
     href="https://dontrell-tate-intelligence-llc.github.io/LockLoom/policies/lockloom-device-owner-policies.html"
     rel="noopener"
     target="_blank"
-    title="LockLoom Device Owner Policies & Runtime Permission Disclosure"
+    title="LockLoom Device Owner Policies &amp; Runtime Permission Disclosure"
   >
     Click Here
   </a>
@@ -58,21 +82,26 @@
 </div>
 
 <div class="wrap">
-  <h1>LockLoom — Device Owner Provisioning QR</h1>
-  <div class="muted">Scannable on Android 9+ setup screen (tap “Welcome” 6–7×)</div>
+  <div class="main">
+    <div class="left">
+      <h1>LockLoom — Device Owner Provisioning QR</h1>
+      <div class="muted">Scannable on Android 9+ setup screen (tap “Welcome” 6–7×)</div>
 
-  <img id="qr" alt="Provisioning QR (latest release)" />
+      <div id="status" class="muted" style="margin-top:16px;">Fetching latest release…</div>
 
-  <div id="status" class="muted">Fetching latest release…</div>
+      <p style="margin-top:12px;">
+        <a id="pngLink" href="#" target="_blank" rel="noopener">Open PNG</a> ·
+        <a id="jsonLink" href="#" target="_blank" rel="noopener">Open JSON</a>
+      </p>
 
-  <p>
-    <a id="pngLink" href="#" target="_blank" rel="noopener">Open PNG</a> ·
-    <a id="jsonLink" href="#" target="_blank" rel="noopener">Open JSON</a>
-  </p>
+      <hr/>
+      <p class="muted"></p>
+    </div>
 
-  <hr/>
-  <p class="muted">
-  </p>
+    <div class="right">
+      <img id="qr" alt="Provisioning QR (latest release)" />
+    </div>
+  </div>
 </div>
 
 <script>
