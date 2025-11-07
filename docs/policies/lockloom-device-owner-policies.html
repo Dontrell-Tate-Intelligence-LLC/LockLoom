@@ -164,13 +164,13 @@
             <td><code>android.permission.CAMERA</code></td>
             <td>
               Used for on-device photo/video capture triggered by local codeword actions or integrity workflows.
-              Media is encrypted locally and deleted after processing; there is no upload path.
+              Media is encrypted locally and deleted after processing; there is no upload path to any backend.
             </td>
           </tr>
           <tr>
             <td><code>android.permission.RECORD_AUDIO</code></td>
             <td>
-              Used for on-device audio capture via MediaRecorder. Files are handled as above (local encryption, ephemeral storage, no network).
+              Used for on-device audio capture via MediaRecorder. Files are handled as above (local encryption, ephemeral storage, no upload path to any backend).
             </td>
           </tr>
           <tr>
@@ -187,7 +187,7 @@
             </td>
             <td>
               Allows reading connection state of the user-paired “kill-switch” Bluetooth device.
-              The app listens to connection broadcasts and queries connected profiles; no device data is uploaded.
+              The app listens to connection broadcasts and queries connected profiles; no device data upload path to any backend.
             </td>
           </tr>
           <tr>
@@ -196,7 +196,7 @@
             </td>
             <td>
               Used by the optional local SOS beacon to obtain a location fix. The SOS dispatcher in this build is a
-              <em>no-op</em> that does not transmit location off-device. Location usage can also be policy-gated or disabled.
+              <em>no-op</em> that does not transmit location off-device to any backend. Location usage can also be policy-gated or disabled.
             </td>
           </tr>
           <tr>
