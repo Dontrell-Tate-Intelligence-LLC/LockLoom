@@ -7,7 +7,7 @@
   body {
     margin: 0;
     font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    min-height: 100vh;          /* no flex here; let content stack */
+    min-height: 100vh;
   }
 
   .wrap { margin: auto; max-width: 1100px; padding: 24px; }
@@ -17,21 +17,18 @@
   .err { color: #c00; font-weight: 600; }
   code, a { word-break: break-all; }
 
-  /* Two-column layout */
   .main {
     display: flex;
     gap: 24px;
     align-items: flex-start;
   }
   .left, .right {
-    flex: 1 1 0;   /* equal halves */
-    min-width: 0;  /* prevent overflow */
+    flex: 1 1 0;
+    min-width: 0;
   }
 
-  /* QR image sizing inside right column */
   #qr { display:block; margin: 0 auto; max-width: 100%; height: auto; }
 
-  /* New: policy link banner */
   .policy-banner {
     width: 100%;
     box-sizing: border-box;
@@ -39,30 +36,28 @@
     border-bottom: 1px solid color-mix(in oklab, CanvasText 18%, Canvas);
     padding: 12px 14px;
     text-align: center;
-    font-size: 2em;            /* 2× font size only for this section */
+    font-size: 2em;
     line-height: 1.25;
   }
   .policy-banner a {
     font-weight: 600;
     text-decoration: none;
-    display: inline-block;     /* forces the URL onto its own line */
+    display: inline-block;
     margin-top: 6px;
   }
   .policy-banner a:hover { text-decoration: underline; }
   .policy-banner img {
     display: block;
     margin: 10px auto 0;
-    width: 128px;              /* adjust as desired */
+    width: 128px;
     height: auto;
   }
 
-  /* Stack on small screens */
   @media (max-width: 900px) {
     .main { flex-direction: column; }
   }
 </style>
 
-<!-- Banner at the very top -->
 <div class="policy-banner">
   <div>Device Owner policies &amp; runtime permission disclosure:</div>
   <a
@@ -129,12 +124,17 @@
 
     if (!svg) throw new Error("lockloom-dpc-qr-with-logo.svg not found in latest release assets.");
 
-    // Use SVG as the displayed image
-    img.src = svg.browser_download_url;
-    svgL.href = svg.browser_download_url;
+    // Convert the download URL to a raw.githubusercontent.com URL
+    const svgRawUrl = svg.browser_download_url
+      .replace("https://github.com/", "https://raw.githubusercontent.com/")
+      .replace("/releases/download/", "/");
+
+    // Display the SVG inline
+    img.src = svgRawUrl;
+    svgL.href = svgRawUrl;
     svgL.textContent = "Open SVG";
 
-    // Optional: still show PNG/JSON links if available
+    // Optional PNG + JSON links
     if (png) {
       pngL.href = png.browser_download_url;
       pngL.textContent = "Open PNG";
