@@ -113,6 +113,14 @@
     const jsonL  = document.getElementById("jsonLink");
     const svgL   = document.getElementById("svgLink");
 
+    // helper to set image+link
+    function setImgAndLink(url, tag) {
+      img.src = url;
+      img.alt = `Provisioning QR (${tag})`;
+      svgL.href = url;
+      svgL.textContent = "Open SVG";
+    }
+
     try {
       const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
         headers: { "Accept": "application/vnd.github+json" },
@@ -127,23 +135,30 @@
 
       if (!svg) throw new Error("lockloom-dpc-qr-with-logo.svg not found in latest release assets.");
 
-      // --- Robust inline rendering for SVG release assets ---
-      // Some GitHub release asset endpoints serve application/octet-stream with 'nosniff'.
-      // We fetch the text, then create a Blob with the correct MIME so <img> will render.
-      const svgResp = await fetch(svg.browser_download_url, { mode: 'cors', cache: 'no-store' });
-      if (!svgResp.ok) throw new Error(`SVG fetch ${svgResp.status}`);
-      const svgText = await svgResp.text();
+      // 1) Prefer serving from the repo at the tag via jsDelivr (requires the SVG be committed in the repo at root)
+      const cdnUrl = `https://cdn.jsdelivr.net/gh/${owner}/${repo}@${data.tag_name}/lockloom-dpc-qr-with-logo.svg`;
+      // 2) Fallback to raw.githubusercontent for tagged file path (also requires file in repo)
+      const rawTagUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${data.tag_name}/lockloom-dpc-qr-with-logo.svg`;
+      // 3) Last resort: use the release asset download URL directly (may fail to render due to Content-Type/nosniff)
+      const assetUrl = svg.browser_download_url;
 
-      const blob = new Blob([svgText], { type: 'image/svg+xml' });
-      const blobUrl = URL.createObjectURL(blob);
-
-      // Display the SVG via blob URL
-      img.src = blobUrl;
-      img.alt = `Provisioning QR (${data.tag_name})`;
-
-      // Link out to the original asset (so users can save the exact file)
-      svgL.href = svg.browser_download_url;
-      svgL.textContent = "Open SVG";
+      // Try CDN first; if the image fails to load, try other URLs in order.
+      setImgAndLink(cdnUrl, data.tag_name);
+      let triedRaw = false;
+      let triedAsset = false;
+      img.onerror = () => {
+        if (!triedRaw) {
+          triedRaw = true;
+          setImgAndLink(rawTagUrl, data.tag_name);
+          status.textContent = `CDN miss; trying tagged file… (${data.tag_name})`;
+        } else if (!triedAsset) {
+          triedAsset = true;
+          setImgAndLink(assetUrl, data.tag_name);
+          status.textContent = `Repo file not found; falling back to release asset… (${data.tag_name})`;
+        } else {
+          status.innerHTML = `<span class="err">Failed to load QR:</span> All sources failed.`;
+        }
+      };
 
       // Optional PNG + JSON links (use the GitHub download URLs)
       if (png) {
@@ -161,13 +176,10 @@
       }
 
       status.textContent = `Loaded from latest release: ${data.tag_name}`;
-
-      // Clean up the blob URL when the image is unloaded (SPA hygiene)
-      window.addEventListener('beforeunload', () => URL.revokeObjectURL(blobUrl));
     } catch (e) {
       console.error(e);
-      document.getElementById('qr').removeAttribute('src');
-      status.innerHTML = `<span class="err">Failed to load QR:</span> ${String(e)}`;
+      img.removeAttribute('src');
+      status.innerHTML = `<span class=\"err\">Failed to load QR:</span> ${String(e)}`;
     }
   })();
   </script>
