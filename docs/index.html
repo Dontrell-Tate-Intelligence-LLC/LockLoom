@@ -104,84 +104,47 @@
   </div>
 
   <script>
-  (async () => {
-    const owner = "Dontrell-Tate-Intelligence-LLC";
-    const repo  = "LockLoom";
-    const status = document.getElementById("status");
-    const img    = document.getElementById("qr");
-    const pngL   = document.getElementById("pngLink");
-    const jsonL  = document.getElementById("jsonLink");
-    const svgL   = document.getElementById("svgLink");
+(async () => {
+  const status = document.getElementById("status");
+  const img    = document.getElementById("qr");
+  const pngL   = document.getElementById("pngLink");
+  const jsonL  = document.getElementById("jsonLink");
+  const svgL   = document.getElementById("svgLink");
 
-    // helper to set image+link
-    function setImgAndLink(url, tag) {
-      img.src = url;
-      img.alt = `Provisioning QR (${tag})`;
-      svgL.href = url;
-      svgL.textContent = "Open SVG";
-    }
+  const pagesUrl = "https://dontrell-tate-intelligence-llc.github.io/LockLoom/lockloom-dpc-qr-with-logo.svg"; // served from /docs
+  const rawUrl   = "https://raw.githubusercontent.com/Dontrell-Tate-Intelligence-LLC/LockLoom/main/docs/lockloom-dpc-qr-with-logo.svg";
 
-    try {
-      const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
-        headers: { "Accept": "application/vnd.github+json" },
-        cache: "no-store"
-      });
-      if (!resp.ok) throw new Error(`GitHub API ${resp.status}`);
-      const data = await resp.json();
+  // Render SVG from GitHub Pages (correct MIME + CORS), fallback to raw
+  svgL.href = pagesUrl;
+  svgL.textContent = "Open SVG";
+  img.alt = "Provisioning QR (from repo)";
+  img.src = pagesUrl;
+  img.onerror = () => {
+    img.src = rawUrl;
+    svgL.href = rawUrl;
+    status.textContent = "Loaded SVG from raw.githubusercontent fallback.";
+  };
 
-      const png  = data.assets.find(a => a.name === "lockloom-dpc-qr.png");
-      const json = data.assets.find(a => a.name === "lockloom-dpc-qr.json");
-      const svg  = data.assets.find(a => a.name === "lockloom-dpc-qr-with-logo.svg");
+  // (Optional) fetch release metadata just to populate PNG/JSON links and show latest tag
+  try {
+    const r = await fetch("https://api.github.com/repos/Dontrell-Tate-Intelligence-LLC/LockLoom/releases/latest", {
+      headers: { "Accept": "application/vnd.github+json" },
+      cache: "no-store"
+    });
+    if (!r.ok) throw new Error(`GitHub API ${r.status}`);
+    const d = await r.json();
 
-      if (!svg) throw new Error("lockloom-dpc-qr-with-logo.svg not found in latest release assets.");
+    const png  = d.assets.find(a => a.name === "lockloom-dpc-qr.png");
+    const json = d.assets.find(a => a.name === "lockloom-dpc-qr.json");
 
-      // 1) Prefer serving from the repo at the tag via jsDelivr (requires the SVG be committed in the repo at root)
-      const cdnUrl = `https://cdn.jsdelivr.net/gh/${owner}/${repo}@${data.tag_name}/lockloom-dpc-qr-with-logo.svg`;
-      // 2) Fallback to raw.githubusercontent for tagged file path (also requires file in repo)
-      const rawTagUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${data.tag_name}/lockloom-dpc-qr-with-logo.svg`;
-      // 3) Last resort: use the release asset download URL directly (may fail to render due to Content-Type/nosniff)
-      const assetUrl = svg.browser_download_url;
+    if (png)  { pngL.href  = png.browser_download_url; } else { pngL.remove(); }
+    if (json) { jsonL.href = json.browser_download_url; } else { jsonL.remove(); }
 
-      // Try CDN first; if the image fails to load, try other URLs in order.
-      setImgAndLink(cdnUrl, data.tag_name);
-      let triedRaw = false;
-      let triedAsset = false;
-      img.onerror = () => {
-        if (!triedRaw) {
-          triedRaw = true;
-          setImgAndLink(rawTagUrl, data.tag_name);
-          status.textContent = `CDN miss; trying tagged file… (${data.tag_name})`;
-        } else if (!triedAsset) {
-          triedAsset = true;
-          setImgAndLink(assetUrl, data.tag_name);
-          status.textContent = `Repo file not found; falling back to release asset… (${data.tag_name})`;
-        } else {
-          status.innerHTML = `<span class="err">Failed to load QR:</span> All sources failed.`;
-        }
-      };
-
-      // Optional PNG + JSON links (use the GitHub download URLs)
-      if (png) {
-        pngL.href = png.browser_download_url;
-        pngL.textContent = "Open PNG";
-      } else {
-        pngL.remove();
-      }
-
-      if (json) {
-        jsonL.href = json.browser_download_url;
-        jsonL.textContent = "Open JSON";
-      } else {
-        jsonL.remove();
-      }
-
-      status.textContent = `Loaded from latest release: ${data.tag_name}`;
-    } catch (e) {
-      console.error(e);
-      img.removeAttribute('src');
-      status.innerHTML = `<span class=\"err\">Failed to load QR:</span> ${String(e)}`;
-    }
-  })();
-  </script>
+    status.textContent = `Loaded SVG from GitHub Pages; latest release: ${d.tag_name}`;
+  } catch (e) {
+    status.textContent = "Loaded SVG from GitHub Pages.";
+  }
+})();
+</script>
 </body>
 </html>
