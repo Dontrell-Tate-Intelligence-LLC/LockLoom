@@ -92,6 +92,7 @@
       <p style="margin-top:12px;">
         <a id="pngLink" href="#" target="_blank" rel="noopener">Open PNG</a> ·
         <a id="jsonLink" href="#" target="_blank" rel="noopener">Open JSON</a>
+        <a id="svgLink" href="#" target="_blank" rel="noopener">Open SVG</a>
       </p>
 
       <hr/>
@@ -109,9 +110,10 @@
   const owner = "Dontrell-Tate-Intelligence-LLC";
   const repo  = "LockLoom";
   const status = document.getElementById("status");
-  const img    = document.getElementById("qr");
+  const img    = document.getElementById("svgL");
   const pngL   = document.getElementById("pngLink");
   const jsonL  = document.getElementById("jsonLink");
+  const svgL  = document.getElementById("svgLink");
 
   try {
     const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
@@ -123,8 +125,9 @@
 
     const png = data.assets.find(a => a.name === "lockloom-dpc-qr.png");
     const json = data.assets.find(a => a.name === "lockloom-dpc-qr.json");
+    const svg = data.assets.find)a => a.name === "lockloom-dpc-qr-with-logo.svg");
 
-    if (!png) throw new Error("lockloom-dpc-qr.png not found in latest release assets.");
+    if (!png) throw new Error("lockloom-dpc-qr-with-logo.svg not found in latest release assets.");
 
     // browser_download_url works fine as <img src> even though it sets Content-Disposition: attachment
     img.src = png.browser_download_url;
