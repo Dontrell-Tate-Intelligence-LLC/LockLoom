@@ -1,157 +1,175 @@
 <!doctype html>
-<meta charset="utf-8" />
-<title>LockLoom — Device Owner Provisioning QR</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<style>
-  :root { color-scheme: light dark; }
-  body {
-    margin: 0;
-    font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    min-height: 100vh;
-  }
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LockLoom — Device Owner Provisioning QR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      margin: 0;
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      min-height: 100vh;
+    }
 
-  .wrap { margin: auto; max-width: 1100px; padding: 24px; }
+    .wrap { margin: auto; max-width: 1100px; padding: 24px; }
 
-  h1 { font-weight: 700; margin: 0 0 8px; }
-  .muted { opacity: .75; }
-  .err { color: #c00; font-weight: 600; }
-  code, a { word-break: break-all; }
+    h1 { font-weight: 700; margin: 0 0 8px; }
+    .muted { opacity: .75; }
+    .err { color: #c00; font-weight: 600; }
+    code, a { word-break: break-all; }
 
-  .main {
-    display: flex;
-    gap: 24px;
-    align-items: flex-start;
-  }
-  .left, .right {
-    flex: 1 1 0;
-    min-width: 0;
-  }
+    .main {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .left, .right {
+      flex: 1 1 0;
+      min-width: 0;
+    }
 
-  #qr { display:block; margin: 0 auto; max-width: 100%; height: auto; }
+    #qr { display:block; margin: 0 auto; max-width: 100%; height: auto; }
 
-  .policy-banner {
-    width: 100%;
-    box-sizing: border-box;
-    background: color-mix(in oklab, CanvasText 12%, Canvas);
-    border-bottom: 1px solid color-mix(in oklab, CanvasText 18%, Canvas);
-    padding: 12px 14px;
-    text-align: center;
-    font-size: 2em;
-    line-height: 1.25;
-  }
-  .policy-banner a {
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-block;
-    margin-top: 6px;
-  }
-  .policy-banner a:hover { text-decoration: underline; }
-  .policy-banner img {
-    display: block;
-    margin: 10px auto 0;
-    width: 128px;
-    height: auto;
-  }
+    .policy-banner {
+      width: 100%;
+      box-sizing: border-box;
+      background: color-mix(in oklab, CanvasText 12%, Canvas);
+      border-bottom: 1px solid color-mix(in oklab, CanvasText 18%, Canvas);
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 2em;
+      line-height: 1.25;
+    }
+    .policy-banner a {
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 6px;
+    }
+    .policy-banner a:hover { text-decoration: underline; }
+    .policy-banner img {
+      display: block;
+      margin: 10px auto 0;
+      width: 128px;
+      height: auto;
+    }
 
-  @media (max-width: 900px) {
-    .main { flex-direction: column; }
-  }
-</style>
+    @media (max-width: 900px) {
+      .main { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="policy-banner">
+    <div>Device Owner policies &amp; runtime permission disclosure:</div>
+    <a
+      href="https://dontrell-tate-intelligence-llc.github.io/LockLoom/policies/lockloom-device-owner-policies.html"
+      rel="noopener noreferrer"
+      target="_blank"
+      title="LockLoom Device Owner Policies &amp; Runtime Permission Disclosure"
+    >
+      Click Here
+    </a>
+    <img
+      src="https://dontrell-tate-intelligence-llc.github.io/LockLoom/assets/ic_launcher-playstore-512.png"
+      alt="LockLoom app icon"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
 
-<div class="policy-banner">
-  <div>Device Owner policies &amp; runtime permission disclosure:</div>
-  <a
-    href="https://dontrell-tate-intelligence-llc.github.io/LockLoom/policies/lockloom-device-owner-policies.html"
-    rel="noopener"
-    target="_blank"
-    title="LockLoom Device Owner Policies &amp; Runtime Permission Disclosure"
-  >
-    Click Here
-  </a>
-  <img
-    src="https://dontrell-tate-intelligence-llc.github.io/LockLoom/assets/ic_launcher-playstore-512.png"
-    alt="LockLoom app icon"
-    loading="lazy"
-    decoding="async"
-  />
-</div>
+  <div class="wrap">
+    <div class="main">
+      <div class="left">
+        <h1>LockLoom — Device Owner Provisioning QR</h1>
+        <div class="muted">Scannable on Android 9+ setup screen (tap “Welcome” 6–7×)</div>
 
-<div class="wrap">
-  <div class="main">
-    <div class="left">
-      <h1>LockLoom — Device Owner Provisioning QR</h1>
-      <div class="muted">Scannable on Android 9+ setup screen (tap “Welcome” 6–7×)</div>
+        <div id="status" class="muted" style="margin-top:16px;">Fetching latest release…</div>
 
-      <div id="status" class="muted" style="margin-top:16px;">Fetching latest release…</div>
+        <p style="margin-top:12px;">
+          <a id="pngLink" href="#" target="_blank" rel="noopener noreferrer">Open PNG</a>
+          · <a id="jsonLink" href="#" target="_blank" rel="noopener noreferrer">Open JSON</a>
+          · <a id="svgLink" href="#" target="_blank" rel="noopener noreferrer">Open SVG</a>
+        </p>
 
-      <p style="margin-top:12px;">
-        <a id="pngLink" href="#" target="_blank" rel="noopener">Open PNG</a> ·
-        <a id="jsonLink" href="#" target="_blank" rel="noopener">Open JSON</a>
-        <a id="svgLink" href="#" target="_blank" rel="noopener">Open SVG</a>
-      </p>
+        <hr/>
+        <p class="muted"></p>
+      </div>
 
-      <hr/>
-      <p class="muted"></p>
-    </div>
-
-    <div class="right">
-      <img id="qr" alt="Provisioning QR (latest release)" />
+      <div class="right">
+        <img id="qr" alt="Provisioning QR (latest release)" />
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-(async () => {
-  const owner = "Dontrell-Tate-Intelligence-LLC";
-  const repo  = "LockLoom";
-  const status = document.getElementById("status");
-  const img    = document.getElementById("qr");
-  const pngL   = document.getElementById("pngLink");
-  const jsonL  = document.getElementById("jsonLink");
-  const svgL   = document.getElementById("svgLink");
+  <script>
+  (async () => {
+    const owner = "Dontrell-Tate-Intelligence-LLC";
+    const repo  = "LockLoom";
+    const status = document.getElementById("status");
+    const img    = document.getElementById("qr");
+    const pngL   = document.getElementById("pngLink");
+    const jsonL  = document.getElementById("jsonLink");
+    const svgL   = document.getElementById("svgLink");
 
-  try {
-    const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
-      headers: { "Accept": "application/vnd.github+json" },
-      cache: "no-store"
-    });
-    if (!resp.ok) throw new Error(`GitHub API ${resp.status}`);
-    const data = await resp.json();
+    try {
+      const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
+        headers: { "Accept": "application/vnd.github+json" },
+        cache: "no-store"
+      });
+      if (!resp.ok) throw new Error(`GitHub API ${resp.status}`);
+      const data = await resp.json();
 
-    const png  = data.assets.find(a => a.name === "lockloom-dpc-qr.png");
-    const json = data.assets.find(a => a.name === "lockloom-dpc-qr.json");
-    const svg  = data.assets.find(a => a.name === "lockloom-dpc-qr-with-logo.svg");
+      const png  = data.assets.find(a => a.name === "lockloom-dpc-qr.png");
+      const json = data.assets.find(a => a.name === "lockloom-dpc-qr.json");
+      const svg  = data.assets.find(a => a.name === "lockloom-dpc-qr-with-logo.svg");
 
-    if (!svg) throw new Error("lockloom-dpc-qr-with-logo.svg not found in latest release assets.");
+      if (!svg) throw new Error("lockloom-dpc-qr-with-logo.svg not found in latest release assets.");
 
-    // Convert the download URL to a raw.githubusercontent.com URL
-    const svgRawUrl = svg.browser_download_url
-      .replace("https://github.com/", "https://raw.githubusercontent.com/")
-      .replace("/releases/download/", "/");
+      // --- Robust inline rendering for SVG release assets ---
+      // Some GitHub release asset endpoints serve application/octet-stream with 'nosniff'.
+      // We fetch the text, then create a Blob with the correct MIME so <img> will render.
+      const svgResp = await fetch(svg.browser_download_url, { mode: 'cors', cache: 'no-store' });
+      if (!svgResp.ok) throw new Error(`SVG fetch ${svgResp.status}`);
+      const svgText = await svgResp.text();
 
-    // Display the SVG inline
-    img.src = svgRawUrl;
-    svgL.href = svgRawUrl;
-    svgL.textContent = "Open SVG";
+      const blob = new Blob([svgText], { type: 'image/svg+xml' });
+      const blobUrl = URL.createObjectURL(blob);
 
-    // Optional PNG + JSON links
-    if (png) {
-      pngL.href = png.browser_download_url;
-      pngL.textContent = "Open PNG";
-    } else {
-      pngL.remove();
+      // Display the SVG via blob URL
+      img.src = blobUrl;
+      img.alt = `Provisioning QR (${data.tag_name})`;
+
+      // Link out to the original asset (so users can save the exact file)
+      svgL.href = svg.browser_download_url;
+      svgL.textContent = "Open SVG";
+
+      // Optional PNG + JSON links (use the GitHub download URLs)
+      if (png) {
+        pngL.href = png.browser_download_url;
+        pngL.textContent = "Open PNG";
+      } else {
+        pngL.remove();
+      }
+
+      if (json) {
+        jsonL.href = json.browser_download_url;
+        jsonL.textContent = "Open JSON";
+      } else {
+        jsonL.remove();
+      }
+
+      status.textContent = `Loaded from latest release: ${data.tag_name}`;
+
+      // Clean up the blob URL when the image is unloaded (SPA hygiene)
+      window.addEventListener('beforeunload', () => URL.revokeObjectURL(blobUrl));
+    } catch (e) {
+      console.error(e);
+      document.getElementById('qr').removeAttribute('src');
+      status.innerHTML = `<span class="err">Failed to load QR:</span> ${String(e)}`;
     }
-
-    if (json) {
-      jsonL.href = json.browser_download_url;
-      jsonL.textContent = "Open JSON";
-    } else {
-      jsonL.remove();
-    }
-
-    status.textContent = `Loaded from latest release: ${data.tag_name}`;
-  } catch (e) {
-    status.innerHTML = `<span class="err">Failed to load QR:</span> ${String(e)}`;
-  }
-})();
-</script>
+  })();
+  </script>
+</body>
+</html>
