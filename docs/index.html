@@ -110,10 +110,10 @@
   const owner = "Dontrell-Tate-Intelligence-LLC";
   const repo  = "LockLoom";
   const status = document.getElementById("status");
-  const img    = document.getElementById("svgL");
+  const img    = document.getElementById("qr");
   const pngL   = document.getElementById("pngLink");
   const jsonL  = document.getElementById("jsonLink");
-  const svgL  = document.getElementById("svgLink");
+  const svgL   = document.getElementById("svgLink");
 
   try {
     const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
@@ -123,16 +123,24 @@
     if (!resp.ok) throw new Error(`GitHub API ${resp.status}`);
     const data = await resp.json();
 
-    const png = data.assets.find(a => a.name === "lockloom-dpc-qr.png");
+    const png  = data.assets.find(a => a.name === "lockloom-dpc-qr.png");
     const json = data.assets.find(a => a.name === "lockloom-dpc-qr.json");
-    const svg = data.assets.find)a => a.name === "lockloom-dpc-qr-with-logo.svg");
+    const svg  = data.assets.find(a => a.name === "lockloom-dpc-qr-with-logo.svg");
 
-    if (!png) throw new Error("lockloom-dpc-qr-with-logo.svg not found in latest release assets.");
+    if (!svg) throw new Error("lockloom-dpc-qr-with-logo.svg not found in latest release assets.");
 
-    // browser_download_url works fine as <img src> even though it sets Content-Disposition: attachment
-    img.src = png.browser_download_url;
-    pngL.href = png.browser_download_url;
-    pngL.textContent = "Open PNG";
+    // Use SVG as the displayed image
+    img.src = svg.browser_download_url;
+    svgL.href = svg.browser_download_url;
+    svgL.textContent = "Open SVG";
+
+    // Optional: still show PNG/JSON links if available
+    if (png) {
+      pngL.href = png.browser_download_url;
+      pngL.textContent = "Open PNG";
+    } else {
+      pngL.remove();
+    }
 
     if (json) {
       jsonL.href = json.browser_download_url;
